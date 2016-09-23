@@ -69,25 +69,23 @@ class EmailInput extends Component {
     if (!event || !event.nativeEvent)
       return;
     let text = event.nativeEvent.text;
-    this.setState({text: text});
     let lastTyped = text.charAt(text.length - 1);
 
-    let parseWhen = [",", " ", ";"];
-
-    if (parseWhen.indexOf(lastTyped) > -1)
-      this.parseEmails();
+    if(lastTyped == " " || lastTyped == ","){
+      this.setState({text: text.substring(0, text.length - 1)}, () =>{
+        this.parseEmails();
+      });
+    }else{
+      this.setState({text: text});
     }
+  }
 
   parseEmails() {
     let {text} = this.state;
     let {value} = this.props;
-    let regex = this.props.regex || /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi;
-    let results = text.match(regex);
 
-    if (results && results.length > 0) {
-      this.setState({text: ""});
-      this.props.onChange(value.concat(results));
-    }
+    this.setState({text: ""});
+    this.props.onChange(value.concat(text));
 
   }
   onKeyPress(event) {
